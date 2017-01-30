@@ -232,20 +232,33 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numb
                             ) / (2 * pow(segmentTimes[0], 4) * pow(segmentTimes[1], 2) * segmentTimes[2])
                             );
 
+        coefficients[0][3][d] = (
+                ((segmentTimes[0] * (2 * pow(segmentTimes[1], 2) - 4 * segmentTimes[1]) * (p[3][d] - p[2][d])) -
+                (2 * segmentTimes[0] * segmentTimes[2] * (p[1][d] - p[2][d])) +
+                (2 * pow(segmentTimes[1], 2) * segmentTimes[2] * (p[0][d] - p[1][d])))
+                / (pow(segmentTimes[0], 3) * pow(segmentTimes[1], 2) * segmentTimes[2])
+            );
 
+        coefficients[1][0][d] = p[1][d];
 
-      // coefficients[1][1][d] = (p[2][d] - p[1][d]) / segmentTimes[1];
+        coefficients[1][1][d] = (
+                ((2 * pow(segmentTimes[1], 2) - 4 * segmentTimes[1]) * (p[3][d] - p[2][d]) -
+                (2 * segmentTimes[2] * (p[1][d] - p[2][d])))
+                / (pow(segmentTimes[1], 2) * segmentTimes[2])
+            );
 
-      // coefficients[1][0][d] = p[1][d];
+        // coefficients[1][1][d] = (2 * segmentTimes[2] * (p[2][d] - p[1][d])) + (2 * segmentTimes[1] * (p[3][d] - p[2][d]))
+        //                         / (segmentTimes[1] * segmentTimes[2]);
 
+        coefficients[1][2][d] = ((segmentTimes[2] * (p[1][d] - p[2][d])) + (2 * segmentTimes[1] * (p[3][d] - p[2][d])))
+                                / (pow(segmentTimes[1], 2) * segmentTimes[2]);
 
+        coefficients[2][0][d] = p[2][d];
 
-      // coefficients[2][2][d] =   ((p[3][d] -p[2][d])*segmentTimes[1] - (p[2][d] - p[1][d])*segmentTimes[2])
-      //                         / (segmentTimes[1]*pow(segmentTimes[2],2));
+        coefficients[2][1][d] = (2 * (p[3][d] - p[2][d])) / segmentTimes[2];
 
-      // coefficients[2][1][d] = (p[2][d] - p[1][d]) / segmentTimes[1];
+        coefficients[2][2][d] = (p[2][d] - p[3][d]) / pow(segmentTimes[2], 2);
 
-      // coefficients[2][0][d] = p[2][d];
    }  // end for d
 
    return;
