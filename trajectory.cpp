@@ -215,6 +215,7 @@ void calculate2dCoefficientsPositionsAndInteriorVelocities (int numberOfSegments
    return;
 }  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
 
+// 3 - 2 - 2
 void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
                                                             double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
 {
@@ -267,8 +268,8 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numb
    return;
 }  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
 
-void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
-                                                            double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
+// 3 - 2 - 2
+void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[], double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
 {
    clearCoefficients (numberOfSegments, coefficients);
 
@@ -277,10 +278,6 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int 
 
       coefficients[0][0][d] = p[0][d];
 
-      // coefficients[0][1][d] =
-      // coefficients[0][2][d] =
-      // coefficients[0][3][d] =
-      //
       coefficients[1][0][d] = p[1][d];
 
       coefficients[1][1][d] = ((p[2][d] - p[1][d]) / segmentTimes[1]) -
@@ -302,6 +299,13 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int 
 
         coefficients[2][2][d] = coefficients[1][2][d];
 
+        coefficients[0][3][d] = ((coefficients[1][2][d] * pow(segmentTimes[0], 2)) - (coefficients[1][1][d] * segmentTimes[0]) +
+                                p[1][d] - p[0][d]) / pow(segmentTimes[0], 3);
+
+        coefficients[0][2][d] = coefficients[1][2][d] - (3 * coefficients[0][3][d] * segmentTimes[0]);
+
+        coefficients[0][1][d] = ((p[1][d] - p[0][d]) / segmentTimes[0]) - (coefficients[0][3][d] * pow(segmentTimes[0], 2)) -
+                                (coefficients[0][2][d] * segmentTimes[0]);
 
    }  // end for d
 
