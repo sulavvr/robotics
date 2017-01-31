@@ -63,6 +63,9 @@ void calculate2dCoefficientsPositionsAndInteriorVelocities
 void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
         (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
          double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS]);
+void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration
+        (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
+         double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS]);
 void clearCoefficients
         (int numberOfSegments, double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS]);
 void calculateAndPlot2dTrajectory
@@ -95,14 +98,17 @@ int main ()
 
    double coefficients [numberOfSegments][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS];
 
-   calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
-   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
+   // calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
+   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
 
-   calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
-   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
+   // calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
+   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
 
    calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (numberOfSegments, p, segmentTimes, coefficients);
    calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, RED, 2); // medium pixel
+
+   calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (numberOfSegments, p, segmentTimes, coefficients);
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, GREEN, 2); // medium pixel
 
    writeImageToFile ("4413-01.bmp", "500x500.bmp", image); // 2nd bitmap MUST be of size W x H
 
@@ -260,6 +266,47 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numb
 
    return;
 }  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
+
+void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
+                                                            double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
+{
+   clearCoefficients (numberOfSegments, coefficients);
+
+   for (int d = X; d <= Y; d++) // dimension = 0, 1
+   {                                                   // see pdf for derivations
+
+      coefficients[0][0][d] = p[0][d];
+
+      // coefficients[0][1][d] =
+      // coefficients[0][2][d] =
+      // coefficients[0][3][d] =
+      //
+      coefficients[1][0][d] = p[1][d];
+
+      coefficients[1][1][d] = ((p[2][d] - p[1][d]) / segmentTimes[1]) -
+                            (
+                                ((pow(segmentTimes[1], 2) * (p[3][d] - p[2][d])) -  ((segmentTimes[1] * segmentTimes[2]) * (p[2][d] - p[1][d])))
+                                / ((segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]))
+                            );
+
+        coefficients[1][2][d] = ((segmentTimes[1] * (p[3][d] - p[2][d])) - (segmentTimes[2] * (p[2][d] - p[1][d])))
+                                / ((segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]));
+
+        coefficients[2][0][d] = p[2][d];
+
+        coefficients[2][1][d] = ((p[3][d] - p[2][d]) / segmentTimes[2]) -
+                            (
+                                (((segmentTimes[1] * segmentTimes[2]) * (p[3][d] - p[2][d])) - (pow(segmentTimes[2], 2) * (p[2][d] - p[1][d])))
+                                / ((segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]))
+                            );
+
+        coefficients[2][2][d] = coefficients[1][2][d];
+
+
+   }  // end for d
+
+   return;
+}  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration
 
 void clearCoefficients (int numberOfSegments, double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
 {
