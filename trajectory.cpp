@@ -95,14 +95,14 @@ int main ()
 
    double coefficients [numberOfSegments][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS];
 
-   // calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
-   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
+   calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
 
-   // calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
-   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
+   calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
 
    calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (numberOfSegments, p, segmentTimes, coefficients);
-   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, RED, 2); // medium pixel
 
    writeImageToFile ("4413-01.bmp", "500x500.bmp", image); // 2nd bitmap MUST be of size W x H
 
@@ -242,13 +242,10 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numb
         coefficients[1][0][d] = p[1][d];
 
         coefficients[1][1][d] = (
-                ((2 * pow(segmentTimes[1], 2) - 4 * segmentTimes[1]) * (p[3][d] - p[2][d]) -
-                (2 * segmentTimes[2] * (p[1][d] - p[2][d])))
+                (((2 * pow(segmentTimes[1], 2) - 4 * pow(segmentTimes[1], 2)) * (p[3][d] - p[2][d])) -
+                (2 * segmentTimes[1] * segmentTimes[2] * (p[1][d] - p[2][d])))
                 / (pow(segmentTimes[1], 2) * segmentTimes[2])
             );
-
-        // coefficients[1][1][d] = (2 * segmentTimes[2] * (p[2][d] - p[1][d])) + (2 * segmentTimes[1] * (p[3][d] - p[2][d]))
-        //                         / (segmentTimes[1] * segmentTimes[2]);
 
         coefficients[1][2][d] = ((segmentTimes[2] * (p[1][d] - p[2][d])) + (2 * segmentTimes[1] * (p[3][d] - p[2][d])))
                                 / (pow(segmentTimes[1], 2) * segmentTimes[2]);
