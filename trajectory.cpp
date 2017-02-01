@@ -1,13 +1,7 @@
 // *****************************************************************************
-//
 // Computer Science 6423: Robotics
-//
 // Program #1: Trajectory Constraints
-//
-// Author: Dr. Hammerand
-//
-// Date: January 28, 2017
-//
+// Author: Sulav Regmi
 // *****************************************************************************
 
 /*
@@ -86,7 +80,7 @@ int main ()
 
    const int numberOfPoints = 4;  // p0, p1, p2, p3
 
-   int p[numberOfPoints][MAX_DIMENSIONS] = {{50, 50}, {100, 400}, {300, 350}, {450, 450}};
+   int p[numberOfPoints][MAX_DIMENSIONS] = {{70, 70}, {100, 400}, {300, 350}, {450, 450}};
 
    for (int i = 0; i <= numberOfPoints-1; i++)
       setPixel (p[i], image, BLACK, 6); // very large pixel
@@ -98,19 +92,21 @@ int main ()
 
    double coefficients [numberOfSegments][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS];
 
-   // calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
-   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
+   calculate2dCoefficientsPositionsOnly (numberOfSegments, p, segmentTimes, coefficients);
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, PURPLE, 4); // large pixel
 
-   // calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
-   // calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
+   calculate2dCoefficientsPositionsAndInteriorVelocities (numberOfSegments, p, segmentTimes, coefficients);
+   calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, ORANGE, 2); // medium pixel
 
+   // with terminal velocity equal = 0
    calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (numberOfSegments, p, segmentTimes, coefficients);
    calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, RED, 2); // medium pixel
 
+   // segment-to-segment acceleration equality
    calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (numberOfSegments, p, segmentTimes, coefficients);
    calculateAndPlot2dTrajectory (numberOfSegments, coefficients, segmentTimes, image, GREEN, 2); // medium pixel
 
-   writeImageToFile ("4413-01.bmp", "500x500.bmp", image); // 2nd bitmap MUST be of size W x H
+   writeImageToFile ("6413-01.bmp", "500x500.bmp", image); // 2nd bitmap MUST be of size W x H
 
    return 0;
 }  // end function main
@@ -215,7 +211,16 @@ void calculate2dCoefficientsPositionsAndInteriorVelocities (int numberOfSegments
    return;
 }  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
 
-// 3 - 2 - 2
+
+/**
+ * 3 - 2 - 2
+ * S0(t) = C03t^3 + C02t^2 + C01t + C00
+ * S1(t) = C12t^2 + C11t + C10
+ * S2(t) = C22t^2 + C21t + C20
+ * 
+ * Additional constraints:
+ * S'0(0) = S'2(t2) = 0 (terminal velocities equals 0)
+ */
 void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[],
                                                             double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
 {
@@ -268,7 +273,16 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal (int numb
    return;
 }  // end function calculate2dCoefficientsPositionsAndInteriorVelocitiesWithTerminal
 
-// 3 - 2 - 2
+/**
+ * 3 - 2 - 2
+ * S0(t) = C03t^3 + C02t^2 + C01t + C00
+ * S1(t) = C12t^2 + C11t + C10
+ * S2(t) = C22t^2 + C21t + C20
+ * 
+ * Additional constraints:
+ * S"0(t0) = S"1(0) (segment to segment acceleration equal)
+ * S"1(t1) = S"2(0) (segment to segment acceleration equal)
+ */
 void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int numberOfSegments, int p[][MAX_DIMENSIONS], double segmentTimes[], double coefficients[][MAX_POLYNOMIAL_DEGREE+1][MAX_DIMENSIONS])
 {
    clearCoefficients (numberOfSegments, coefficients);
@@ -299,8 +313,18 @@ void calculate2dCoefficientsPositionsAndInteriorVelocitiesWithAcceleration (int 
 
         coefficients[2][2][d] = coefficients[1][2][d];
 
-        coefficients[0][3][d] = ((coefficients[1][2][d] * pow(segmentTimes[0], 2)) - (coefficients[1][1][d] * segmentTimes[0]) +
-                                p[1][d] - p[0][d]) / pow(segmentTimes[0], 3);
+        coefficients[0][3][d] = (
+                (((3 * segmentTimes[0] * segmentTimes[1]) * p[3][d] - p[2][d]) - ((3 * segmentTimes[0] * segmentTimes[2]) * (p[2][d] - p[1][d])))
+                / ((7 * pow(segmentTimes[0], 2) * segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]))
+            ) -
+            (
+                (
+                    (segmentTimes[0] * pow(segmentTimes[1], 2) * (p[3][d] - p[2][d])) - 
+                    ((segmentTimes[0] * segmentTimes[1] * segmentTimes[2]) * p[2][d] - p[1][d]) - 
+                    ((segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]) * (p[1][d] - p[0][d]))
+                ) / ((7 * pow(segmentTimes[0], 3) * segmentTimes[1] * segmentTimes[2]) * (segmentTimes[1] + segmentTimes[2]))
+            );
+
 
         coefficients[0][2][d] = coefficients[1][2][d] - (3 * coefficients[0][3][d] * segmentTimes[0]);
 
