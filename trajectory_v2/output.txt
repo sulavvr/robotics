@@ -1,0 +1,87 @@
+1A: POSITIONS ONLY polynomial coefficients
+segment 0:
+Sx(t) =    0.1414t +   50.0000
+Sy(t) =    0.9899t +   50.0000
+segment 1:
+Sx(t) =    0.9701t +  100.0000
+Sy(t) =   -0.2425t +  400.0000
+segment 2:
+Sx(t) =    0.8321t +  300.0000
+Sy(t) =    0.5547t +  350.0000
+
+check 1A: positions only
+                p_start                  p_end
+ segment    data       s(0)         data      s(t_i)
+  0:     ( 50,  50) ( 50,  50)   (100, 400) (100, 400)
+  1:     (100, 400) (100, 400)   (300, 350) (300, 350)
+  2:     (300, 350) (300, 350)   (450, 450) (450, 450)
+
+1B: POSITIONS & INTERIOR VELOCITIES polynomial coefficients
+segment 0:
+Sx(t) =    0.0023t^2 +   -0.6873t +   50.0000
+Sy(t) =   -0.0035t^2 +    2.2224t +   50.0000
+segment 1:
+Sx(t) =    0.9701t +  100.0000
+Sy(t) =   -0.2425t +  400.0000
+segment 2:
+Sx(t) =   -0.0008t^2 +    0.9701t +  300.0000
+Sy(t) =    0.0044t^2 +   -0.2425t +  350.0000
+
+check 1B: positions
+                p_start                  p_end
+ segment    data       s(0)         data      s(t_i)
+  0:     ( 50,  50) ( 50,  50)   (100, 400) (100, 400)
+  1:     (100, 400) (100, 400)   (300, 350) (300, 350)
+  2:     (300, 350) (300, 350)   (450, 450) (450, 450)
+
+check 1B: interior velocities
+first derivatives polynomial coefficients
+segment 0:
+S'x(t) =    0.0047t +   -0.6873
+S'y(t) =   -0.0070t +    2.2224
+segment 1:
+S'x(t) =    0.9701
+S'y(t) =   -0.2425
+segment 2:
+S'x(t) =   -0.0015t +    0.9701
+S'y(t) =    0.0088t +   -0.2425
+
+segment   p_start            v(0)              p_end           v(t_i)
+  0:    ( 50,  50) (  -0.6873,    2.2224)   (100, 400) (   0.9701,   -0.2425)
+  1:    (100, 400) (   0.9701,   -0.2425)   (300, 350) (   0.9701,   -0.2425)
+  2:    (300, 350) (   0.9701,   -0.2425)   (450, 450) (   0.6940,    1.3519)
+
+1C: POSITIONS & ALL VELOCITIES polynomial coefficients
+segment 0:
+Sx(t) =    0.0004t^2 +   50.0000
+Sy(t) =    0.0028t^2 +   50.0000
+segment 1:
+Sx(t) =    0.0000t^3 +    0.0033t^2 +    0.2828t +  100.0000
+Sy(t) =    0.0001t^3 +   -0.0281t^2 +    1.9799t +  400.0000
+segment 2:
+Sx(t) =   -0.0046t^2 +    1.6641t +  300.0000
+Sy(t) =   -0.0031t^2 +    1.1094t +  350.0000
+
+check 1C: positions
+                p_start                  p_end
+ segment    data       s(0)         data      s(t_i)
+  0:     ( 50,  50) ( 50,  50)   (100, 400) (100, 400)
+  1:     (100, 400) (100, 400)   (300, 350) (300, 350)
+  2:     (300, 350) (300, 350)   (450, 450) (450, 450)
+
+check 1C: all velocities
+first derivatives polynomial coefficients
+segment 0:
+S'x(t) =    0.0008t
+S'y(t) =    0.0056t
+segment 1:
+S'x(t) =    0.0000t^2 +    0.0066t +    0.2828
+S'y(t) =    0.0003t^2 +   -0.0562t +    1.9799
+segment 2:
+S'x(t) =   -0.0092t +    1.6641
+S'y(t) =   -0.0062t +    1.1094
+
+segment   p_start            v(0)              p_end           v(t_i)
+  0:    ( 50,  50) (   0.0000,    0.0000)   (100, 400) (   0.2828,    1.9799)
+  1:    (100, 400) (   0.2828,    1.9799)   (300, 350) (   1.6641,    1.1094)
+  2:    (300, 350) (   1.6641,    1.1094)   (450, 450) (   0.0000,    0.0000)
